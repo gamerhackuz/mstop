@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gradient Builder</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:#0f172a;color:white;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+.card{background:#1e293b;padding:20px;border-radius:12px;width:350px}
+h2{text-align:center;color:#ec4899;margin-bottom:15px}
+.preview{height:100px;border-radius:8px;margin-bottom:15px;transition:0.2s}
+.stops{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.stop{display:flex;align-items:center;gap:5px;background:#0f172a;padding:5px;border-radius:6px}
+input[type=color]{width:30px;height:30px;border:none;cursor:pointer}
+input[type=range]{width:40px;accent-color:#ec4899}
+.ctrl{display:flex;gap:10px;margin-bottom:10px}
+button{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;color:white}
+.add{background:#10b981}.del{background:#ef4444}
+.code{background:#0b1120;padding:8px;border-radius:6px;font-family:monospace;font-size:12px;color:#34d399;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>🎨 Gradient Builder</h2>
+  <div class="preview" id="prev"></div>
+  <div class="ctrl">
+    <label>Burchak <input type="range" id="ang" min="0" max="360" value="90"></label>
+    <button class="add" onclick="addStop()">➺ Rang</button>
+    <button class="del" onclick="rmStop()">🗑 Oxirgi</button>
+  </div>
+  <div class="stops" id="stops"></div>
+  <div class="code" id="css"></div>
+</div>
+<script>
+let stops=[{color:'#3b82f6',pos:0},{color:'#ec4899',pos:100}];
+function render(){
+  const ang=document.getElementById('ang').value;
+  const grad=`linear-gradient(${ang}deg, ${stops.map(s=>`${s.color} ${s.pos}%`).join(', ')})`;
+  document.getElementById('prev').style.background=grad;
+  document.getElementById('css').textContent=`background: ${grad};`;
+  document.getElementById('stops').innerHTML=stops.map((s,i)=>`
+    <div class="stop"><input type="color" value="${s.color}" onchange="stops[${i}].color=this.value;update()"><input type="range" min="0" max="100" value="${s.pos}" oninput="stops[${i}].pos=this.value;update()"></div>`).join('');
+}
+function update(){render()}
+function addStop(){if(stops.length<5)stops.push({color:'#ffffff',pos:50});render()}
+function rmStop(){if(stops.length>2){stops.pop();render()}}
+document.getElementById('ang').addEventListener('input',update);
+render();
+</script>
+</body>
+</html>
